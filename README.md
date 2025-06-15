@@ -1,59 +1,61 @@
-# 🐦 FlappyBird - Custom Character Edition
+# 🕊️ AirSprint: Sky Duel - Custom Flappy Adventure
 
-*Swift* + *SpriteKit* kullanılarak geliştirilen bu Flappy Bird türevi oyun, oyunculara klasik deneyimin ötesinde yepyeni bir kişiselleştirme sunar:  
-🎨 Oyuncular, kuş yerine kendi istedikleri görselleri seçerek karakterlerini oluşturabilirler!
+A modern and customizable reimagining of the classic Flappy Bird — now with **2-player dueling**, **dynamic obstacles**, and **personalized characters**.
+
+Developed in **Swift + SpriteKit**, this project is tailored for fun gameplay, educational exploration, and real-time mobile interaction.
 
 ---
 
-## 📱 Ekran Görüntüleri
+## 📱 Screenshots
 
-| Giriş Ekranı | Oyun İçi 1 | Oyun İçi 2 | Oyun İçi 3 | Oyun İçi 4 |
-|-------------|------------|------------|------------|------------|
+| Loading | Game Start | Solo Play | Versus Mode | Custom Bird |
+|--------|------------|------------|-------------|-------------|
 | ![loading](screenshots/1.png) | ![ss1](screenshots/2.png) | ![ss2](screenshots/3.png) | ![ss3](screenshots/4.png) | ![ss4](screenshots/5.png) |
 
 ---
 
-## 🎮 Özellikler
+## 🎮 Features
 
-- 🧠 *Kendi görselini seç, karakterin olsun!*  
-  Oyuncular fotoğraf galerilerinden kendi resimlerini seçerek kuş yerine geçirebilirler.
+- 🎨 **Custom Character Support**  
+  Players can replace the bird with any image from their photo library — even a selfie!
 
-- 🏆 *Skor Sistemi ve Kayıtlı En İyi Skor*  
-  UserDefaults ile en iyi skor saklanır ve her oyun sonrası güncellenir.
+- 🧠 **Dual-Screen Controls**  
+  - Tap the **left side** to flap (Player 1 – the flyer)  
+  - Tap the **right side** to throw bees (Player 2 – the challenger)
 
-- 🎯 *Gerçek zamanlı skor artışı*  
-  Her engel geçildiğinde skor artar ve ekranda anlık görüntülenir.
+- 🏆 **Real-Time Score Tracking**  
+  Score increases as you pass obstacles. Best score is saved with `UserDefaults`.
 
-- 🧱 *Rastgele yükseklikli engeller*  
-  Her oyun farklı bir zorluk sunar.
+- 🧱 **Randomized Obstacle Heights**  
+  Every session feels new, with randomized obstacle layout and challenge level.
 
-- 📸 *Karakter Değişim Butonu*  
-  Oyunun üst kısmında yer alan "Character" butonuna tıklayarak kuş yerine istediğin görseli kullanabilirsin!
+- 🔄 **Replay Friendly**  
+  One-tap restart and quick response UI make it endlessly replayable.
 
-- 🎓 *Çocuklar için ideal*  
-  Eğlenceli, sade ve özelleştirilebilir yapısı ile çocuklara özel kullanıcı deneyimi sağlar.
+- 👦👧 **Kid-Friendly Mode**  
+  Simple controls, colorful visuals, and no ads – perfect for younger audiences.
 
-- 🧩 *Yarışmalı veya Sıralamalı Versiyonlar için Uygun Altyapı*  
-  Çok oyunculu, lider tablosu, süreli turnuva gibi geliştirmelere uygundur.
-
----
-
-## 🛠️ Teknoloji ve Kütüphaneler
-
-| Teknoloji | Açıklama |
-|----------|----------|
-| Swift 5  | Ana programlama dili |
-| SpriteKit | 2D fizik tabanlı oyun motoru |
-| UIKit    | Görsel arayüz yönetimi |
-| AVFoundation | Görsel seçme ve galeriye erişim için gerekli yapı |
+- 💡 **Tutorial Overlay & Info Button**  
+  First-time users see a tutorial. A persistent `?` button brings it back any time.
 
 ---
 
-## 🚀 Başlarken
+## ⚙️ Technologies Used
 
-### Gerekli Adımlar
+| Technology     | Purpose                                 |
+|----------------|-----------------------------------------|
+| **Swift 5**     | Core programming language               |
+| **SpriteKit**   | Physics-based 2D game engine            |
+| **UIKit**       | Used for image picking and view control |
+| **AVFoundation**| Accessing photo library                 |
 
-1. Bu projeyi klonlayın:
+---
+
+## 🚀 Getting Started
+
+### 🔧 Setup Instructions
+
+1. Clone the repository:
 ```bash
 git clone https://github.com/enesbayri/FlappyBird-Swift.git
 cd flappyBird

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -16,54 +16,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wall" translatesAutoresizingMaskIntoConstraints="NO" id="321-eJ-bhy">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading" translatesAutoresizingMaskIntoConstraints="NO" id="321-eJ-bhy">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="FLAPPY BİRD" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZz-i9-l2T">
-                                <rect key="frame" x="0.0" y="337" width="393" height="33"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="33" id="tOh-sF-nc6"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="26"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AirSprint: Sky Duel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZz-i9-l2T">
+                                <rect key="frame" x="0.0" y="94" width="393" height="33"/>
+                                <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="29"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
+                                <color key="shadowColor" systemColor="systemCyanColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bird" translatesAutoresizingMaskIntoConstraints="NO" id="Ckx-kf-VJL">
-                                <rect key="frame" x="76" y="378" width="241" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="bby-H0-OGS"/>
-                                </constraints>
-                            </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="stone" translatesAutoresizingMaskIntoConstraints="NO" id="GWV-m9-04Z">
-                                <rect key="frame" x="180" y="514" width="33" height="338"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="338" id="LOf-QP-TZe"/>
-                                </constraints>
-                            </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="stone" translatesAutoresizingMaskIntoConstraints="NO" id="WZa-4t-4IO">
-                                <rect key="frame" x="180" y="0.0" width="33" height="330"/>
-                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="aZz-i9-l2T" firstAttribute="centerX" secondItem="Ckx-kf-VJL" secondAttribute="centerX" id="0H1-za-2Ja"/>
-                            <constraint firstItem="WZa-4t-4IO" firstAttribute="trailing" secondItem="GWV-m9-04Z" secondAttribute="trailing" id="3Yc-Bj-ILZ"/>
-                            <constraint firstAttribute="trailing" secondItem="aZz-i9-l2T" secondAttribute="trailing" id="BBK-sH-BeS"/>
-                            <constraint firstItem="GWV-m9-04Z" firstAttribute="top" secondItem="Ckx-kf-VJL" secondAttribute="bottom" constant="8" symbolic="YES" id="KEh-e8-6Nb"/>
-                            <constraint firstItem="WZa-4t-4IO" firstAttribute="leading" secondItem="GWV-m9-04Z" secondAttribute="leading" id="LPW-VR-ERX"/>
-                            <constraint firstItem="aZz-i9-l2T" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="MKJ-z0-lzI"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="321-eJ-bhy" secondAttribute="trailing" id="MSo-dC-RAq"/>
-                            <constraint firstAttribute="bottom" secondItem="GWV-m9-04Z" secondAttribute="bottom" id="Sop-KU-XE6"/>
-                            <constraint firstItem="WZa-4t-4IO" firstAttribute="centerX" secondItem="aZz-i9-l2T" secondAttribute="centerX" id="WZJ-hd-1hp"/>
-                            <constraint firstItem="GWV-m9-04Z" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="180" id="b8o-FJ-0E0"/>
-                            <constraint firstItem="Ckx-kf-VJL" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="76" id="dV4-qx-SL4"/>
-                            <constraint firstItem="321-eJ-bhy" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="g4a-rg-gmO"/>
-                            <constraint firstItem="WZa-4t-4IO" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="hTq-tt-Wvm"/>
-                            <constraint firstItem="Ckx-kf-VJL" firstAttribute="top" secondItem="aZz-i9-l2T" secondAttribute="bottom" constant="8" symbolic="YES" id="ogr-nm-CDT"/>
-                            <constraint firstAttribute="bottom" secondItem="321-eJ-bhy" secondAttribute="bottom" id="qZa-Aq-DyA"/>
-                            <constraint firstItem="321-eJ-bhy" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="rIl-xl-bMz"/>
-                            <constraint firstItem="aZz-i9-l2T" firstAttribute="top" secondItem="WZa-4t-4IO" secondAttribute="bottom" constant="7" id="uuW-xG-SVF"/>
+                            <constraint firstItem="321-eJ-bhy" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="55B-zd-g9C"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="aZz-i9-l2T" secondAttribute="bottom" constant="657" id="5fQ-yR-3n9"/>
+                            <constraint firstItem="321-eJ-bhy" firstAttribute="leading" secondItem="aZz-i9-l2T" secondAttribute="leading" id="Sdb-IA-BxP"/>
+                            <constraint firstAttribute="bottom" secondItem="321-eJ-bhy" secondAttribute="bottom" id="XBR-HT-WOK"/>
+                            <constraint firstAttribute="trailing" secondItem="aZz-i9-l2T" secondAttribute="trailing" id="bEW-Vo-t4j"/>
+                            <constraint firstItem="aZz-i9-l2T" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="eDe-R9-Kjt"/>
+                            <constraint firstItem="aZz-i9-l2T" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" constant="-24" id="r3e-BG-TYf"/>
+                            <constraint firstItem="321-eJ-bhy" firstAttribute="trailing" secondItem="aZz-i9-l2T" secondAttribute="trailing" id="snu-d3-2fK"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -73,11 +47,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="bird" width="717" height="610"/>
-        <image name="stone" width="20" height="360"/>
-        <image name="wall" width="512" height="512"/>
+        <image name="loading" width="1024" height="1536"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemCyanColor">
+            <color red="0.1960784314" green="0.67843137249999996" blue="0.90196078430000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -33,6 +33,11 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
     
     var changeButton = SKNode()
     
+    var tutorialNode: SKShapeNode?
+    
+    var lastEnemySpawnTime: TimeInterval = 0
+    let enemySpawnCooldown: TimeInterval = 3.0 // saniye
+    
     // for pick image
     var viewController: UIViewController!
     
@@ -40,6 +45,7 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
     enum CollisionCategory: UInt32 {
         case bird = 1
         case wall = 2
+        case enemyObstacle = 4  // yeni eklenen düşman objesi
     }
     
     override func didMove(to view: SKView) {
@@ -67,8 +73,10 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
         
         // Çarpışma Algılama : KUŞ
         bird.physicsBody?.categoryBitMask = CollisionCategory.bird.rawValue
-        bird.physicsBody?.contactTestBitMask = CollisionCategory.bird.rawValue
+        bird.physicsBody?.contactTestBitMask = CollisionCategory.bird.rawValue | CollisionCategory.enemyObstacle.rawValue   // Kuş rakip engeline çarparsa
         bird.physicsBody?.collisionBitMask = CollisionCategory.wall.rawValue
+        
+
         
         
         self.addChild(bird)
@@ -129,15 +137,130 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
         self.addChild(changeButton)
         
         
-        
-    
+        // Arka plan dairesi
+        let infoBackground = SKShapeNode(circleOfRadius: 30)
+        infoBackground.fillColor = SKColor(red: 0.2, green: 0.2, blue: 0.25, alpha: 0.8) // koyu gri/siyah
+        infoBackground.strokeColor = .clear
+        infoBackground.position = CGPoint(x: frame.maxX - 50, y: frame.minY + 60)
+        infoBackground.zPosition = 5
+        infoBackground.name = "infoButtonBackground" // dokunma için istenirse kullanılabilir
+
+        // ❓ simgesi
+        let infoLabel = SKLabelNode(fontNamed: "Chalkduster")
+        infoLabel.name = "infoButton"
+        infoLabel.text = "❓"
+        infoLabel.fontSize = 50
+        infoLabel.fontColor = .white
+        infoLabel.position = CGPoint(x: 0, y: -18) // Arka plan merkezine hizalanır
+        infoLabel.zPosition = 6
+
+        infoBackground.addChild(infoLabel)
+        addChild(infoBackground)
         
         
         bestScoreControl()
         
         startInfoAnimation()
         
+        
+        showTutorialOverlay()
    
+    }
+    
+    
+    func showTutorialOverlay() {
+        let overlaySize = CGSize(width: frame.width, height: frame.height)
+        
+        // Ana yarı şeffaf zemin
+        let background = SKShapeNode(rectOf: overlaySize)
+        background.position = CGPoint(x: frame.midX, y: frame.midY)
+        background.fillColor = .black.withAlphaComponent(0.75)
+        background.strokeColor = .clear
+        background.zPosition = 100
+        background.name = "tutorialOverlay"
+
+        // Sol yarı (oyuncu)
+        let playerZone = SKShapeNode(rectOf: CGSize(width: frame.width / 2, height: frame.height))
+        playerZone.position = CGPoint(x: frame.midX - frame.width / 4, y: frame.midY)
+        playerZone.fillColor = SKColor.systemBlue.withAlphaComponent(0.4)
+        playerZone.strokeColor = .clear
+        playerZone.zPosition = 101
+        background.addChild(playerZone)
+
+        // Sağ yarı (rakip)
+        let enemyZone = SKShapeNode(rectOf: CGSize(width: frame.width / 2, height: frame.height))
+        enemyZone.position = CGPoint(x: frame.midX + frame.width / 4, y: frame.midY)
+        enemyZone.fillColor = SKColor.systemRed.withAlphaComponent(0.4)
+        enemyZone.strokeColor = .clear
+        enemyZone.zPosition = 101
+        background.addChild(enemyZone)
+
+        // Açıklama metni
+        let label = SKLabelNode(fontNamed: "Chalkduster")
+        
+        label.text = """
+        🌟 How to Play 🌟
+
+        🟦 Tap the LEFT side to FLY your bird
+        🔴 Tap the RIGHT side to send BEES to your rival
+
+        🧍 Play solo by using only the left side!
+        👬 Or play together with a friend on the same screen!
+
+        🐝 Avoid all obstacles and enemy bees
+        🏆 Try to reach the highest score!
+        """
+        label.fontSize = 22
+        label.numberOfLines = 0
+        label.preferredMaxLayoutWidth = frame.width - 80
+        label.position = CGPoint(x: 0, y: 100)
+        label.fontColor = .white
+        label.zPosition = 102
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode = .center
+        background.addChild(label)
+
+        // "How to Play" etiketi (alt kısımda simgesel)
+        let infoLabel = SKLabelNode(fontNamed: "Chalkduster")
+        infoLabel.text = "Tap Anywhere to Start"
+        infoLabel.fontSize = 18
+        infoLabel.fontColor = .lightGray
+        infoLabel.position = CGPoint(x: 0, y: -frame.height / 2 + 50)
+        infoLabel.zPosition = 103
+        background.addChild(infoLabel)
+        
+        let modeLabel = SKLabelNode(fontNamed: "Chalkduster")
+        modeLabel.text = "🧍 Single Player or 👬 Two Players!"
+        modeLabel.fontSize = 32
+        modeLabel.fontColor = .white
+        modeLabel.position = CGPoint(x: 0, y: frame.height / 2 - 120)
+        modeLabel.zPosition = 103
+        background.addChild(modeLabel)
+
+        addChild(background)
+        tutorialNode = background
+    }
+    
+    
+    func spawnObstacleFromRight(at yPosition: CGFloat) {
+        let enemy = SKSpriteNode(imageNamed: "bee") // Projeye 'bee' resmi ekleyin
+        enemy.size = CGSize(width: 50, height: 50)
+        enemy.position = CGPoint(x: self.frame.maxX + 30, y: yPosition)
+        enemy.zPosition = 1
+        enemy.name = "enemyObstacle"
+
+        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
+        enemy.physicsBody?.isDynamic = true
+        enemy.physicsBody?.affectedByGravity = false
+        enemy.physicsBody?.categoryBitMask = CollisionCategory.enemyObstacle.rawValue
+        enemy.physicsBody?.contactTestBitMask = CollisionCategory.bird.rawValue
+        enemy.physicsBody?.collisionBitMask = 0 // temas var, fiziksel tepki yok
+
+        addChild(enemy)
+
+        let move = SKAction.moveTo(x: self.frame.minX - 60, duration: 3.0)
+        let remove = SKAction.removeFromParent()
+        enemy.run(SKAction.sequence([move, remove]))
     }
     
     
@@ -250,44 +373,87 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
 
     }
     
+    func didBegin(_ contact: SKPhysicsContact) {
+        let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
+
+        if contactMask == (CollisionCategory.bird.rawValue | CollisionCategory.wall.rawValue) ||
+           contactMask == (CollisionCategory.bird.rawValue | CollisionCategory.enemyObstacle.rawValue) {
+            // oyun biter
+            gameOver()
+        }
+    }
+    
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-            for touch in touches {
-                let location = touch.location(in: self)
-                
-                // Butonun üzerine tıklanıp tıklanmadığını kontrol et
-                if let tappedNode = self.atPoint(location) as? SKSpriteNode {
-                    if tappedNode.name == "changeButton" {
-                        print("Basıldı")
-                        openPhotoLibrary()
-                        
-                    }else {
-                        if gameStarted == false {
-                            
-                            // bilgi metni gizleme
-                            stopInfoAnimation()
-                            infoLabel.isHidden = true
-                            
-                            // Duvarları başlatma
-                            startObjectMovement()
-                            
-                            // Kuş yerçekimi başlatma
-                            bird.physicsBody?.affectedByGravity = true
-                            bird.physicsBody?.isDynamic = true
-                            gameStarted = true
-                        }
-                        if changeButton.isHidden == false {
-                            changeButton.isHidden = true
-                        }
-                        
-                        bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 70))
-                    }
-                
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let tappedNode = self.atPoint(location)
+
+        // 🎯 1. Tutorial ekranı varsa kaldır
+        if let tutorial = tutorialNode {
+            tutorial.removeFromParent()
+            tutorialNode = nil
+            return
         }
-                
+
+        // 🎯 2. Butonlara öncelik ver (changeButton + infoButton)
+        if tappedNode.name == "changeButton" || tappedNode.name == "changeIcon" {
+            openPhotoLibrary()
+            return
         }
-        
+
+        if tappedNode.name == "infoButton" || tappedNode.name == "infoButtonBackground" {
+            if tutorialNode == nil {
+                showTutorialOverlay()
+            }
+            return
+        }
+
+        // 🎯 3. Oyun kontrolleri (sol/sağ tıklamalar)
+        let currentTime = CACurrentMediaTime()
+
+        if location.x > self.frame.midX {
+            // Sağ taraf → rakip saldırı (arı gönderme)
+            if currentTime - lastEnemySpawnTime >= enemySpawnCooldown {
+                spawnObstacleFromRight(at: location.y)
+                lastEnemySpawnTime = currentTime
+            } else {
+                // Cooldown uyarısı göster
+                let waitLabel = SKLabelNode(fontNamed: "Chalkduster")
+                waitLabel.text = "Wait 3 sec!"
+                waitLabel.fontSize = 24
+                waitLabel.fontColor = .red
+                waitLabel.position = CGPoint(x: location.x, y: location.y + 40)
+                waitLabel.zPosition = 10
+                waitLabel.alpha = 0.0
+
+                addChild(waitLabel)
+
+                let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.2)
+                let wait = SKAction.wait(forDuration: 1.0)
+                let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+                let remove = SKAction.removeFromParent()
+
+                waitLabel.run(SKAction.sequence([fadeIn, wait, fadeOut, remove]))
+            }
+        } else {
+            // Sol taraf → kuş zıplatma ve oyun başlatma
+            if gameStarted == false {
+                stopInfoAnimation()
+                infoLabel.isHidden = true
+                startObjectMovement()
+                bird.physicsBody?.affectedByGravity = true
+                bird.physicsBody?.isDynamic = true
+                gameStarted = true
+            }
+            if changeButton.isHidden == false {
+                changeButton.isHidden = true
+            }
+            bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 70))
+        }
     }
+    
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 
@@ -304,32 +470,7 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
     
     override func update(_ currentTime: TimeInterval) {
         if (bird.position.y < self.frame.minY || bird.position.x < (self.frame.minX - 80 )) && gameStarted == true {
-            stopObjectMovement()  // KAYAN DUVARLARI DURDURMA
-            walls.removeAll() // SKOR SİSTEMİ İÇN DUVARLARI SIFIRLAMA
-            
-            // Oyunu Durdurma
-            gameStarted = false
-            
-            // Bilgi metni gösterme
-            startInfoAnimation()
-            infoLabel.isHidden = false
-            infoLabel.text = "Game Over! Tap to play again"
-            
-            // KUŞU RESETLEME
-            bird.physicsBody?.affectedByGravity = false
-            bird.physicsBody?.isDynamic = false
-            bird.position = originalBirdPosition
-            
-            
-            // en iyi skor kontrolü
-            bestScoreControl()
-            
-            
-            // skor sıfırlama
-            score = 0
-            
-            // değişim butonu gösterme
-            changeButton.isHidden = false
+            gameOver()
             
         }
         if gameStarted == true && walls.count > 0{  // SKOR SİSTEMİ İÇİN KONTROL YAPILIR VE SKOR EKLENİR
@@ -341,6 +482,43 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
             }
         }
         
+    }
+    
+    func gameOver() {
+        // Kuşun tüm etkilerini kaldır
+        bird.removeAllActions()
+        bird.physicsBody = nil // önce fiziksel etkileşimi tamamen kaldır
+
+        // Pozisyonu sıfırla
+        bird.position = originalBirdPosition
+        bird.zRotation = 0
+
+        // Yeni physics body tanımla
+        bird.physicsBody = SKPhysicsBody(circleOfRadius: 45)
+        bird.physicsBody?.isDynamic = false
+        bird.physicsBody?.affectedByGravity = false
+        bird.physicsBody?.mass = 0.13
+        bird.physicsBody?.categoryBitMask = CollisionCategory.bird.rawValue
+        bird.physicsBody?.contactTestBitMask = CollisionCategory.bird.rawValue | CollisionCategory.enemyObstacle.rawValue
+        bird.physicsBody?.collisionBitMask = CollisionCategory.wall.rawValue
+
+        // Objeleri durdur
+        stopObjectMovement()
+        walls.removeAll()
+
+        // Skor işlemleri
+        score = 0
+        scoreLabel.text = ""
+
+        // UI
+        gameStarted = false
+        infoLabel.text = "Game Over! Tap to Play Again"
+        infoLabel.isHidden = false
+        startInfoAnimation()
+        changeButton.isHidden = false
+
+        // Best skor
+        bestScoreControl()
     }
     
     func openPhotoLibrary() {
