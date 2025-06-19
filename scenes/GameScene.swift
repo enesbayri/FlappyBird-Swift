@@ -15,6 +15,8 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
     
     var moveAction: SKAction?
     
+    var isDualMode: Bool = true
+    
     var bird = SKSpriteNode()
     
     var gameStarted = false
@@ -49,6 +51,7 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
     }
     
     override func didMove(to view: SKView) {
+        print(self.frame.size)
         
         self.physicsWorld.contactDelegate = self  // Çarpışma Algılama
         self.scaleMode = .fill
@@ -163,83 +166,18 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
         startInfoAnimation()
         
         
-        showTutorialOverlay()
+        showTutorial()
+        
+        addBackButton()
    
     }
     
-    
-    func showTutorialOverlay() {
-        let overlaySize = CGSize(width: frame.width, height: frame.height)
-        
-        // Ana yarı şeffaf zemin
-        let background = SKShapeNode(rectOf: overlaySize)
-        background.position = CGPoint(x: frame.midX, y: frame.midY)
-        background.fillColor = .black.withAlphaComponent(0.75)
-        background.strokeColor = .clear
-        background.zPosition = 100
-        background.name = "tutorialOverlay"
-
-        // Sol yarı (oyuncu)
-        let playerZone = SKShapeNode(rectOf: CGSize(width: frame.width / 2, height: frame.height))
-        playerZone.position = CGPoint(x: frame.midX - frame.width / 4, y: frame.midY)
-        playerZone.fillColor = SKColor.systemBlue.withAlphaComponent(0.4)
-        playerZone.strokeColor = .clear
-        playerZone.zPosition = 101
-        background.addChild(playerZone)
-
-        // Sağ yarı (rakip)
-        let enemyZone = SKShapeNode(rectOf: CGSize(width: frame.width / 2, height: frame.height))
-        enemyZone.position = CGPoint(x: frame.midX + frame.width / 4, y: frame.midY)
-        enemyZone.fillColor = SKColor.systemRed.withAlphaComponent(0.4)
-        enemyZone.strokeColor = .clear
-        enemyZone.zPosition = 101
-        background.addChild(enemyZone)
-
-        // Açıklama metni
-        let label = SKLabelNode(fontNamed: "Chalkduster")
-        
-        label.text = """
-        🌟 How to Play 🌟
-
-        🟦 Tap the LEFT side to FLY your bird
-        🔴 Tap the RIGHT side to send BEES to your rival
-
-        🧍 Play solo by using only the left side!
-        👬 Or play together with a friend on the same screen!
-
-        🐝 Avoid all obstacles and enemy bees
-        🏆 Try to reach the highest score!
-        """
-        label.fontSize = 22
-        label.numberOfLines = 0
-        label.preferredMaxLayoutWidth = frame.width - 80
-        label.position = CGPoint(x: 0, y: 100)
-        label.fontColor = .white
-        label.zPosition = 102
-        label.horizontalAlignmentMode = .center
-        label.verticalAlignmentMode = .center
-        background.addChild(label)
-
-        // "How to Play" etiketi (alt kısımda simgesel)
-        let infoLabel = SKLabelNode(fontNamed: "Chalkduster")
-        infoLabel.text = "Tap Anywhere to Start"
-        infoLabel.fontSize = 18
-        infoLabel.fontColor = .lightGray
-        infoLabel.position = CGPoint(x: 0, y: -frame.height / 2 + 50)
-        infoLabel.zPosition = 103
-        background.addChild(infoLabel)
-        
-        let modeLabel = SKLabelNode(fontNamed: "Chalkduster")
-        modeLabel.text = "🧍 Single Player or 👬 Two Players!"
-        modeLabel.fontSize = 32
-        modeLabel.fontColor = .white
-        modeLabel.position = CGPoint(x: 0, y: frame.height / 2 - 120)
-        modeLabel.zPosition = 103
-        background.addChild(modeLabel)
-
-        addChild(background)
-        tutorialNode = background
+    func showTutorial() {
+        tutorialNode = Tutorial.showTutorialOverlay(frame: frame, scene: self, isScale: true , isSingle: !isDualMode )
     }
+    
+    
+    
     
     
     func spawnObstacleFromRight(at yPosition: CGFloat) {
@@ -290,6 +228,17 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
             bestScoreLabel.text = "Best Score : \(bestScore)"
             UserDefaults.standard.set(bestScore, forKey: "bestScore")
         }
+    }
+    
+    func addBackButton() {
+        let backButton = SKLabelNode(text: "◀ Back")
+        backButton.fontName = "Chalkduster"
+        backButton.fontSize = 24
+        backButton.fontColor = .white
+        backButton.position = CGPoint(x: frame.minX + 60, y: frame.minY + 40)
+        backButton.zPosition = 500
+        backButton.name = "backButton"
+        addChild(backButton)
     }
     
     func startSpawningObjects() {
@@ -402,10 +351,18 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
             openPhotoLibrary()
             return
         }
+        
+        if tappedNode.name == "backButton" {
+            
+            let mainMenuScene = MainMenuScene(size: UIScreen.main.bounds.size)
+            mainMenuScene.scaleMode = .aspectFill
+            self.view?.presentScene(mainMenuScene, transition: SKTransition.fade(withDuration: 0.5))
+            return
+        }
 
         if tappedNode.name == "infoButton" || tappedNode.name == "infoButtonBackground" {
             if tutorialNode == nil {
-                showTutorialOverlay()
+                showTutorial()
             }
             return
         }
@@ -413,32 +370,47 @@ class GameScene: SKScene , SKPhysicsContactDelegate , UIImagePickerControllerDel
         // 🎯 3. Oyun kontrolleri (sol/sağ tıklamalar)
         let currentTime = CACurrentMediaTime()
 
-        if location.x > self.frame.midX {
-            // Sağ taraf → rakip saldırı (arı gönderme)
-            if currentTime - lastEnemySpawnTime >= enemySpawnCooldown {
-                spawnObstacleFromRight(at: location.y)
-                lastEnemySpawnTime = currentTime
+        if isDualMode {
+            if location.x > self.frame.midX {
+                // Sağ taraf → rakip saldırı (arı gönderme)
+                if currentTime - lastEnemySpawnTime >= enemySpawnCooldown {
+                    spawnObstacleFromRight(at: location.y)
+                    lastEnemySpawnTime = currentTime
+                } else {
+                    // Cooldown uyarısı göster
+                    let waitLabel = SKLabelNode(fontNamed: "Chalkduster")
+                    waitLabel.text = "Wait 3 sec!"
+                    waitLabel.fontSize = 24
+                    waitLabel.fontColor = .red
+                    waitLabel.position = CGPoint(x: location.x, y: location.y + 40)
+                    waitLabel.zPosition = 10
+                    waitLabel.alpha = 0.0
+
+                    addChild(waitLabel)
+
+                    let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.2)
+                    let wait = SKAction.wait(forDuration: 1.0)
+                    let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+                    let remove = SKAction.removeFromParent()
+
+                    waitLabel.run(SKAction.sequence([fadeIn, wait, fadeOut, remove]))
+                }
             } else {
-                // Cooldown uyarısı göster
-                let waitLabel = SKLabelNode(fontNamed: "Chalkduster")
-                waitLabel.text = "Wait 3 sec!"
-                waitLabel.fontSize = 24
-                waitLabel.fontColor = .red
-                waitLabel.position = CGPoint(x: location.x, y: location.y + 40)
-                waitLabel.zPosition = 10
-                waitLabel.alpha = 0.0
-
-                addChild(waitLabel)
-
-                let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.2)
-                let wait = SKAction.wait(forDuration: 1.0)
-                let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-                let remove = SKAction.removeFromParent()
-
-                waitLabel.run(SKAction.sequence([fadeIn, wait, fadeOut, remove]))
+                // Sol taraf → kuş zıplatma ve oyun başlatma
+                if gameStarted == false {
+                    stopInfoAnimation()
+                    infoLabel.isHidden = true
+                    startObjectMovement()
+                    bird.physicsBody?.affectedByGravity = true
+                    bird.physicsBody?.isDynamic = true
+                    gameStarted = true
+                }
+                if changeButton.isHidden == false {
+                    changeButton.isHidden = true
+                }
+                bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 70))
             }
-        } else {
-            // Sol taraf → kuş zıplatma ve oyun başlatma
+        }else {
             if gameStarted == false {
                 stopInfoAnimation()
                 infoLabel.isHidden = true
